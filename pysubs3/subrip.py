@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 import re
-import warnings
 from typing import List
 
 import pysubs3
@@ -11,6 +10,13 @@ from pysubs3.ssastyle import SSAStyle
 from pysubs3.substation import parse_tags
 from pysubs3.exceptions import ContentNotUsable
 from pysubs3.time import ms_to_times, make_time, TIMESTAMP, timestamp_to_ms
+
+import warnings
+from bs4 import BeautifulSoup, MarkupResemblesLocatorWarning
+
+warnings.filterwarnings("ignore",
+                        category=MarkupResemblesLocatorWarning,
+                        module='bs4')
 
 #: Largest timestamp allowed in SubRip, ie. 99:59:59,999.
 MAX_REPRESENTABLE_TIME = make_time(h=100) - 1
@@ -103,7 +109,6 @@ class SubripFormat(FormatBase):
             s = "".join(lines).strip()
             s = re.sub(r"\n+ *\d+ *$", "", s)  # strip number of next subtitle
             if not keep_html_tags:
-                from bs4 import BeautifulSoup
                 soup = BeautifulSoup(s, "html.parser")
                 s = soup.get_text().strip()
             # s = re.sub(r"\n", r"\\N", s) # convert newlines # why pysubs2 does this?
