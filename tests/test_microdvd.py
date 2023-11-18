@@ -1,7 +1,7 @@
 from textwrap import dedent
 import pytest
 
-from pysubs2 import SSAFile, SSAEvent, SSAStyle, UnknownFPSError
+from pysubs3 import SSAFile, SSAEvent, SSAStyle, UnknownFPSError
 
 
 def test_framerate_inference():

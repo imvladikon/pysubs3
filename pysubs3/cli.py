@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 import argparse
 import codecs
 import os
@@ -7,10 +9,10 @@ import io
 from io import open
 import sys
 from textwrap import dedent
-from .formats import get_file_extension, FORMAT_IDENTIFIERS
-from .time import make_time
-from .ssafile import SSAFile
-from .common import VERSION
+from pysubs3.formats import get_file_extension, FORMAT_IDENTIFIERS
+from pysubs3.time import make_time
+from pysubs3.ssafile import SSAFile
+from pysubs3.version import __version__ as VERSION
 import logging
 
 
@@ -33,7 +35,8 @@ def time(s: str) -> int:
     d = {}
     for v, k in re.findall(r"(\d*\.?\d*)(ms|m|s|h)", s):
         d[k] = float(v)
-    return make_time(**d)  # type: ignore  # Argument 1 has incomp. type "**Dict[Any, float]"; expected "Optional[int]"
+    return make_time(
+        **d)  # type: ignore  # Argument 1 has incomp. type "**Dict[Any, float]"; expected "Optional[int]"
 
 
 def change_ext(path: str, ext: str) -> str:
@@ -41,38 +44,43 @@ def change_ext(path: str, ext: str) -> str:
     return base + ext
 
 
-class Pysubs2CLI:
+class Pysubs3CLI:
     def __init__(self):
-        parser = self.parser = argparse.ArgumentParser(formatter_class=argparse.RawDescriptionHelpFormatter,
-                                                       prog="pysubs2",
-                                                       description=dedent("""
-                                                       The pysubs2 CLI for processing subtitle files.
+        parser = self.parser = argparse.ArgumentParser(
+            formatter_class=argparse.RawDescriptionHelpFormatter,
+            prog="pysubs3",
+            description=dedent("""
+                                                       The pysubs3 CLI for processing subtitle files.
                                                        https://github.com/tkarabela/pysubs2
                                                        """),
-                                                       epilog=dedent("""
+            epilog=dedent("""
                                                        usage examples:
-                                                         python -m pysubs2 --to srt *.ass
-                                                         python -m pysubs2 --to srt --clean *.ass
-                                                         python -m pysubs2 --to microdvd --fps 23.976 *.ass
-                                                         python -m pysubs2 --shift 0.3s *.srt
-                                                         python -m pysubs2 --shift 0.3s <my_file.srt >retimed_file.srt
-                                                         python -m pysubs2 --shift-back 0.3s --output-dir retimed *.srt
-                                                         python -m pysubs2 --transform-framerate 25 23.976 *.srt"""))
+                                                         python -m pysubs3 --to srt *.ass
+                                                         python -m pysubs3 --to srt --clean *.ass
+                                                         python -m pysubs3 --to microdvd --fps 23.976 *.ass
+                                                         python -m pysubs3 --shift 0.3s *.srt
+                                                         python -m pysubs3 --shift 0.3s <my_file.srt >retimed_file.srt
+                                                         python -m pysubs3 --shift-back 0.3s --output-dir retimed *.srt
+                                                         python -m pysubs3 --transform-framerate 25 23.976 *.srt"""))
 
         parser.add_argument("files", nargs="*", metavar="FILE",
                             help="Input subtitle files. Can be in SubStation Alpha (*.ass, *.ssa), SubRip (*.srt), "
                                  "MicroDVD (*.sub) or other supported format. When no files are specified, "
-                                 "pysubs2 will work as a pipe, reading from standard input and writing to standard output.")
+                                 "pysubs3 will work as a pipe, reading from standard input and writing to standard output.")
 
-        parser.add_argument("-v", "--version", action="version", version=f"pysubs2 {VERSION}")
+        parser.add_argument("-v", "--version", action="version",
+                            version=f"pysubs3 {VERSION}")
 
-        parser.add_argument("-f", "--from", choices=FORMAT_IDENTIFIERS, dest="input_format",
+        parser.add_argument("-f", "--from", choices=FORMAT_IDENTIFIERS,
+                            dest="input_format",
                             help="By default, subtitle format is detected from the file. This option can be used to "
                                  "skip autodetection and force specific format. Generally, it should never be needed.")
-        parser.add_argument("-t", "--to", choices=FORMAT_IDENTIFIERS, dest="output_format",
+        parser.add_argument("-t", "--to", choices=FORMAT_IDENTIFIERS,
+                            dest="output_format",
                             help="Convert subtitle files to given format. By default, each file is saved in its "
                                  "original format.")
-        parser.add_argument("--input-enc", metavar="ENCODING", default="utf-8", type=character_encoding,
+        parser.add_argument("--input-enc", metavar="ENCODING", default="utf-8",
+                            type=character_encoding,
                             help="Character encoding for input files. By default, UTF-8 is used for both "
                                  "input and output.")
         parser.add_argument("--output-enc", metavar="ENCODING", type=character_encoding,
@@ -100,11 +108,13 @@ class Pysubs2CLI:
                            help="Delay all subtitles by given time amount. Time is specified like this: '1m30s', '0.5s', ...")
         group.add_argument("--shift-back", metavar="TIME", type=time,
                            help="The opposite of --shift (subtitles will appear sooner).")
-        group.add_argument("--transform-framerate", nargs=2, metavar=("FPS1", "FPS2"), type=positive_float,
+        group.add_argument("--transform-framerate", nargs=2, metavar=("FPS1", "FPS2"),
+                           type=positive_float,
                            help="Multiply all timestamps by FPS1/FPS2 ratio.")
 
         extra_srt_options = parser.add_argument_group("optional arguments (SRT)")
-        extra_srt_options.add_argument("--srt-keep-unknown-html-tags", action="store_true",
+        extra_srt_options.add_argument("--srt-keep-unknown-html-tags",
+                                       action="store_true",
                                        help="(input) do not strip unrecognized HTML tags")
         extra_srt_options.add_argument("--srt-keep-html-tags", action="store_true",
                                        help="(input) do not convert HTML tags to SubStation internally,"
@@ -113,7 +123,8 @@ class Pysubs2CLI:
                                        help="(output) do not convert/strip SubStation tags for output")
 
         extra_sub_options = parser.add_argument_group("optional arguments (MicroDVD)")
-        extra_sub_options.add_argument("--sub-no-write-fps-declaration", action="store_true",
+        extra_sub_options.add_argument("--sub-no-write-fps-declaration",
+                                       action="store_true",
                                        help="(output) omit writing FPS as first zero-length subtitle")
 
     def __call__(self, argv):
@@ -158,7 +169,8 @@ class Pysubs2CLI:
                     errors += 1
                 else:
                     with open(path, encoding=args.input_enc) as infile:
-                        subs = SSAFile.from_file(infile, args.input_format, args.fps, **extra_input_args)
+                        subs = SSAFile.from_file(infile, args.input_format, args.fps,
+                                                 **extra_input_args)
 
                     self.process(subs, args)
 
@@ -175,7 +187,8 @@ class Pysubs2CLI:
                         outpath = op.join(args.output_dir, filename)
 
                     with open(outpath, "w", encoding=args.output_enc) as outfile:
-                        subs.to_file(outfile, output_format, args.fps, apply_styles=not args.clean,
+                        subs.to_file(outfile, output_format, args.fps,
+                                     apply_styles=not args.clean,
                                      **extra_output_args)
         else:
             infile = io.TextIOWrapper(sys.stdin.buffer, args.input_enc)

@@ -1,5 +1,7 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 class Pysubs2Error(Exception):
-    """Base class for pysubs2 exceptions."""
+    """Base class for pysubs3 exceptions."""
 
 
 class UnknownFPSError(Pysubs2Error):

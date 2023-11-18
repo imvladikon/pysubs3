@@ -1,24 +1,33 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 import logging
 import re
 import warnings
 from numbers import Number
 from typing import Any, Union, Optional, Dict
 
-import pysubs2
-from .formatbase import FormatBase
-from .ssaevent import SSAEvent
-from .ssastyle import SSAStyle
-from .common import Color, Alignment, SSA_ALIGNMENT
-from .time import make_time, ms_to_times, timestamp_to_ms, TIMESTAMP, TIMESTAMP_SHORT
+import pysubs3
+from pysubs3.formatbase import FormatBase
+from pysubs3.ssaevent import SSAEvent
+from pysubs3.ssastyle import SSAStyle
+from pysubs3.common import Color, Alignment, SSA_ALIGNMENT
+from pysubs3.time import (make_time, ms_to_times, timestamp_to_ms,
+                          TIMESTAMP, TIMESTAMP_SHORT)
 
 
 def ass_to_ssa_alignment(i):
-    warnings.warn("ass_to_ssa_alignment function is deprecated, please use the Alignment enum", DeprecationWarning)
-    return SSA_ALIGNMENT[i-1]
+    warnings.warn(
+        "ass_to_ssa_alignment function is deprecated, please use the Alignment enum",
+        DeprecationWarning)
+    return SSA_ALIGNMENT[i - 1]
+
 
 def ssa_to_ass_alignment(i):
-    warnings.warn("ssa_to_ass_alignment function is deprecated, please use the Alignment enum", DeprecationWarning)
+    warnings.warn(
+        "ssa_to_ass_alignment function is deprecated, please use the Alignment enum",
+        DeprecationWarning)
     return SSA_ALIGNMENT.index(i) + 1
+
 
 SECTION_HEADING = re.compile(
     r"^.{,3}"  # allow 3 chars at start of line for BOM
@@ -38,11 +47,15 @@ STYLE_FORMAT_LINE = {
 }
 
 STYLE_FIELDS = {
-    "ass": ["fontname", "fontsize", "primarycolor", "secondarycolor", "outlinecolor", "backcolor", "bold", "italic",
-            "underline", "strikeout", "scalex", "scaley", "spacing", "angle", "borderstyle", "outline", "shadow",
+    "ass": ["fontname", "fontsize", "primarycolor", "secondarycolor", "outlinecolor",
+            "backcolor", "bold", "italic",
+            "underline", "strikeout", "scalex", "scaley", "spacing", "angle",
+            "borderstyle", "outline", "shadow",
             "alignment", "marginl", "marginr", "marginv", "encoding"],
-    "ssa": ["fontname", "fontsize", "primarycolor", "secondarycolor", "tertiarycolor", "backcolor", "bold", "italic",
-            "borderstyle", "outline", "shadow", "alignment", "marginl", "marginr", "marginv", "alphalevel", "encoding"]
+    "ssa": ["fontname", "fontsize", "primarycolor", "secondarycolor", "tertiarycolor",
+            "backcolor", "bold", "italic",
+            "borderstyle", "outline", "shadow", "alignment", "marginl", "marginr",
+            "marginv", "alphalevel", "encoding"]
 }
 
 EVENT_FORMAT_LINE = {
@@ -51,18 +64,23 @@ EVENT_FORMAT_LINE = {
 }
 
 EVENT_FIELDS = {
-    "ass": ["layer", "start", "end", "style", "name", "marginl", "marginr", "marginv", "effect", "text"],
-    "ssa": ["marked", "start", "end", "style", "name", "marginl", "marginr", "marginv", "effect", "text"]
+    "ass": ["layer", "start", "end", "style", "name", "marginl", "marginr", "marginv",
+            "effect", "text"],
+    "ssa": ["marked", "start", "end", "style", "name", "marginl", "marginr", "marginv",
+            "effect", "text"]
 }
 
 #: Largest timestamp allowed in SubStation, ie. 9:59:59.99.
 MAX_REPRESENTABLE_TIME = make_time(h=10) - 10
 
+
 def color_to_ass_rgba(c: Color) -> str:
     return f"&H{((c.a << 24) | (c.b << 16) | (c.g << 8) | c.r):08X}"
 
+
 def color_to_ssa_rgb(c: Color) -> str:
     return f"{((c.b << 16) | (c.g << 8) | c.r)}"
+
 
 def rgba_to_color(s: str) -> Color:
     if s[0] == '&':
@@ -75,6 +93,7 @@ def rgba_to_color(s: str) -> Color:
     a = (x >> 24) & 0xff
     return Color(r, g, b, a)
 
+
 def is_valid_field_content(s: str) -> bool:
     """
     Returns True if string s can be stored in a SubStation field.
@@ -86,7 +105,8 @@ def is_valid_field_content(s: str) -> bool:
     return "\n" not in s and "," not in s
 
 
-def parse_tags(text: str, style: SSAStyle = SSAStyle.DEFAULT_STYLE, styles: Optional[Dict[str, SSAStyle]] = None):
+def parse_tags(text: str, style: SSAStyle = SSAStyle.DEFAULT_STYLE,
+               styles: Optional[Dict[str, SSAStyle]] = None):
     """
     Split text into fragments with computed SSAStyles.
     
@@ -105,26 +125,30 @@ def parse_tags(text: str, style: SSAStyle = SSAStyle.DEFAULT_STYLE, styles: Opti
     """
     if styles is None:
         styles = {}
-    
+
     fragments = SSAEvent.OVERRIDE_SEQUENCE.split(text)
     if len(fragments) == 1:
         return [(text, style)]
-    
+
     def apply_overrides(all_overrides: str) -> SSAStyle:
         s = style.copy()
         for tag in re.findall(r"\\[ibusp][0-9]|\\r[a-zA-Z_0-9 ]*", all_overrides):
             if tag == r"\r":
-                s = style.copy() # reset to original line style
+                s = style.copy()  # reset to original line style
             elif tag.startswith(r"\r"):
                 name = tag[2:]
                 if name in styles:  # type: ignore[operator]
                     # reset to named style
                     s = styles[name].copy()  # type: ignore[index]
             else:
-                if "i" in tag: s.italic = "1" in tag
-                elif "b" in tag: s.bold = "1" in tag
-                elif "u" in tag: s.underline = "1" in tag
-                elif "s" in tag: s.strikeout = "1" in tag
+                if "i" in tag:
+                    s.italic = "1" in tag
+                elif "b" in tag:
+                    s.bold = "1" in tag
+                elif "u" in tag:
+                    s.underline = "1" in tag
+                elif "s" in tag:
+                    s.strikeout = "1" in tag
                 elif "p" in tag:
                     try:
                         scale = int(tag[2:])
@@ -133,14 +157,15 @@ def parse_tags(text: str, style: SSAStyle = SSAStyle.DEFAULT_STYLE, styles: Opti
 
                     s.drawing = scale > 0
         return s
-    
+
     overrides = SSAEvent.OVERRIDE_SEQUENCE.findall(text)
     overrides_prefix_sum = ["".join(overrides[:i]) for i in range(len(overrides) + 1)]
     computed_styles = map(apply_overrides, overrides_prefix_sum)
     return list(zip(fragments, computed_styles))
 
 
-NOTICE = "Script generated by pysubs2\nhttps://pypi.python.org/pypi/pysubs2"
+NOTICE = "Script generated by pysubs3\nhttps://pypi.python.org/pypi/pysubs3"
+
 
 class SubstationFormat(FormatBase):
     """SubStation Alpha (ASS, SSA) subtitle format implementation"""
@@ -151,7 +176,9 @@ class SubstationFormat(FormatBase):
         if ms < 0:
             ms = 0
         if ms > MAX_REPRESENTABLE_TIME:
-            warnings.warn("Overflow in SubStation timestamp, clamping to MAX_REPRESENTABLE_TIME", RuntimeWarning)
+            warnings.warn(
+                "Overflow in SubStation timestamp, clamping to MAX_REPRESENTABLE_TIME",
+                RuntimeWarning)
             ms = MAX_REPRESENTABLE_TIME
 
         h, m, s, ms = ms_to_times(ms)
@@ -163,15 +190,15 @@ class SubstationFormat(FormatBase):
 
     @classmethod
     def guess_format(cls, text):
-        """See :meth:`pysubs2.formats.FormatBase.guess_format()`"""
+        """See :meth:`pysubs3.formats.FormatBase.guess_format()`"""
         if re.search(r"V4\+ Styles", text, re.IGNORECASE):
             return "ass"
         elif re.search(r"V4 Styles", text, re.IGNORECASE):
             return "ssa"
 
     @classmethod
-    def from_file(cls, subs: "pysubs2.SSAFile", fp, format_, **kwargs):
-        """See :meth:`pysubs2.formats.FormatBase.from_file()`"""
+    def from_file(cls, subs: "pysubs3.SSAFile", fp, format_, **kwargs):
+        """See :meth:`pysubs3.formats.FormatBase.from_file()`"""
 
         def string_to_field(f: str, v: str):
             # Per issue #45, we should handle the case where there is extra whitespace around the values.
@@ -200,9 +227,11 @@ class SubstationFormat(FormatBase):
                 return rgba_to_color(v)
             elif f in {"bold", "underline", "italic", "strikeout"}:
                 return v == "-1"
-            elif f in {"borderstyle", "encoding", "marginl", "marginr", "marginv", "layer", "alphalevel"}:
+            elif f in {"borderstyle", "encoding", "marginl", "marginr", "marginv",
+                       "layer", "alphalevel"}:
                 return int(v)
-            elif f in {"fontsize", "scalex", "scaley", "spacing", "angle", "outline", "shadow"}:
+            elif f in {"fontsize", "scalex", "scaley", "spacing", "angle", "outline",
+                       "shadow"}:
                 return float(v)
             elif f == "marked":
                 return v.endswith("1")
@@ -213,7 +242,8 @@ class SubstationFormat(FormatBase):
                     else:
                         return Alignment.from_ssa_alignment(int(v))
                 except Exception:
-                    warnings.warn("Failed to parse alignment, using default", RuntimeWarning)
+                    warnings.warn("Failed to parse alignment, using default",
+                                  RuntimeWarning)
                     return Alignment.BOTTOM_CENTER
             elif f == "fontname":
                 return v.strip()
@@ -244,7 +274,7 @@ class SubstationFormat(FormatBase):
                 inside_font_section = "Fonts" in line
                 inside_graphic_section = "Graphics" in line
             elif inside_info_section or inside_aegisub_section:
-                if line.startswith(";"): continue # skip comments
+                if line.startswith(";"): continue  # skip comments
                 try:
                     k, v = line.split(":", 1)
                     if inside_info_section:
@@ -265,8 +295,10 @@ class SubstationFormat(FormatBase):
                     elif inside_graphic_section:
                         subs.graphics_opaque[current_attachment_name] = attachment_data
                     else:
-                        raise NotImplementedError("Bad attachment section, expected [Fonts] or [Graphics]")
-                    logging.debug("at line %d: finished attachment definition %s", lineno, current_attachment_name)
+                        raise NotImplementedError(
+                            "Bad attachment section, expected [Fonts] or [Graphics]")
+                    logging.debug("at line %d: finished attachment definition %s", lineno,
+                                  current_attachment_name)
                     current_attachment_lines_buffer.clear()
                     current_attachment_name = None
 
@@ -280,14 +312,16 @@ class SubstationFormat(FormatBase):
             elif line.startswith("Style:"):
                 _, rest = line.split(":", 1)
                 buf = rest.strip().split(",")
-                name, raw_fields = buf[0], buf[1:] # splat workaround for Python 2.7
-                field_dict = {f: string_to_field(f, v) for f, v in zip(STYLE_FIELDS[format_], raw_fields)}
+                name, raw_fields = buf[0], buf[1:]  # splat workaround for Python 2.7
+                field_dict = {f: string_to_field(f, v) for f, v in
+                              zip(STYLE_FIELDS[format_], raw_fields)}
                 sty = SSAStyle(**field_dict)
                 subs.styles[name] = sty
             elif line.startswith("Dialogue:") or line.startswith("Comment:"):
                 ev_type, rest = line.split(":", 1)
-                raw_fields = rest.strip().split(",", len(EVENT_FIELDS[format_])-1)
-                field_dict = {f: string_to_field(f, v) for f, v in zip(EVENT_FIELDS[format_], raw_fields)}
+                raw_fields = rest.strip().split(",", len(EVENT_FIELDS[format_]) - 1)
+                field_dict = {f: string_to_field(f, v) for f, v in
+                              zip(EVENT_FIELDS[format_], raw_fields)}
                 field_dict["type"] = ev_type
                 ev = SSAEvent(**field_dict)
                 subs.events.append(ev)
@@ -302,13 +336,15 @@ class SubstationFormat(FormatBase):
             else:
                 subs.graphics_opaque[current_attachment_name] = attachment_data
 
-            logging.debug("at EOF: finished attachment definition %s", current_attachment_name)
+            logging.debug("at EOF: finished attachment definition %s",
+                          current_attachment_name)
             current_attachment_lines_buffer.clear()
             current_attachment_name = None
 
     @classmethod
-    def to_file(cls, subs: "pysubs2.SSAFile", fp, format_, header_notice=NOTICE, **kwargs):
-        """See :meth:`pysubs2.formats.FormatBase.to_file()`"""
+    def to_file(cls, subs: "pysubs3.SSAFile", fp, format_, header_notice=NOTICE,
+                **kwargs):
+        """See :meth:`pysubs3.formats.FormatBase.to_file()`"""
         print("[Script Info]", file=fp)
         for line in header_notice.splitlines(False):
             print(";", line, file=fp)
@@ -331,7 +367,9 @@ class SubstationFormat(FormatBase):
                 if isinstance(v, Alignment):
                     alignment = v
                 else:
-                    warnings.warn("The 'alignment' attribute of SSAStyle should be an Alignment instance, using plain int is deprecated", DeprecationWarning)
+                    warnings.warn(
+                        "The 'alignment' attribute of SSAStyle should be an Alignment instance, using plain int is deprecated",
+                        DeprecationWarning)
                     alignment = Alignment(v)
 
                 if format_ == "ssa":
@@ -348,12 +386,14 @@ class SubstationFormat(FormatBase):
                 else:
                     return color_to_ssa_rgb(v)
             else:
-                raise TypeError(f"Unexpected type when writing a SubStation field {f!r} for line {line!r}")
+                raise TypeError(
+                    f"Unexpected type when writing a SubStation field {f!r} for line {line!r}")
 
         print("\n[V4+ Styles]" if format_ == "ass" else "\n[V4 Styles]", file=fp)
         print(STYLE_FORMAT_LINE[format_], file=fp)
         for name, sty in subs.styles.items():
-            fields = [field_to_string(f, getattr(sty, f), sty) for f in STYLE_FIELDS[format_]]
+            fields = [field_to_string(f, getattr(sty, f), sty) for f in
+                      STYLE_FIELDS[format_]]
             print(f"Style: {name}", *fields, sep=",", file=fp)
 
         if subs.fonts_opaque:
@@ -375,6 +415,7 @@ class SubstationFormat(FormatBase):
         print("\n[Events]", file=fp)
         print(EVENT_FORMAT_LINE[format_], file=fp)
         for ev in subs.events:
-            fields = [field_to_string(f, getattr(ev, f), ev) for f in EVENT_FIELDS[format_]]
+            fields = [field_to_string(f, getattr(ev, f), ev) for f in
+                      EVENT_FIELDS[format_]]
             print(ev.type, end=": ", file=fp)
             print(*fields, sep=",", file=fp)

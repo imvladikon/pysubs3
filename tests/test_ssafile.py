@@ -1,6 +1,6 @@
 import pytest
 
-from pysubs2 import SSAFile, SSAStyle, SSAEvent, make_time
+from pysubs3 import SSAFile, SSAStyle, SSAEvent, make_time
 
 def test_repr_default():
     subs = SSAFile()

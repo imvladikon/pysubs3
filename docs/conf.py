@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# pysubs2 documentation build configuration file, created by
+# pysubs3 documentation build configuration file, created by
 # sphinx-quickstart on Tue Aug 05 22:38:43 2014.
 #
 # This file is execfile()d with the current directory set to its
@@ -20,7 +20,7 @@ import sphinx_rtd_theme
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 sys.path.insert(0, os.path.abspath('..'))
-import pysubs2
+import pysubs3
 
 # -- General configuration ------------------------------------------------
 
@@ -50,7 +50,7 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'pysubs2'
+project = u'pysubs3'
 copyright = u'2014-2023, Tomas Karabela'
 
 # The version info for the project you're documenting, acts as replacement for
@@ -58,7 +58,7 @@ copyright = u'2014-2023, Tomas Karabela'
 # built documents.
 #
 # The short X.Y version.
-version = pysubs2.VERSION
+version = pysubs3.VERSION
 # The full version, including alpha/beta/rc tags.
 release = version
 
@@ -203,7 +203,7 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-  ('index', 'pysubs2.tex', u'pysubs2 Documentation',
+  ('index', 'pysubs3.tex', u'pysubs3 Documentation',
    u'Tomas Karabela', 'manual'),
 ]
 
@@ -233,7 +233,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    ('index', 'pysubs2', u'pysubs2 Documentation',
+    ('index', 'pysubs3', u'pysubs3 Documentation',
      [u'Tomas Karabela'], 1)
 ]
 
@@ -247,8 +247,8 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-  ('index', 'pysubs2', u'pysubs2 Documentation',
-   u'Tomas Karabela', 'pysubs2', 'One line description of project.',
+  ('index', 'pysubs3', u'pysubs3 Documentation',
+   u'Tomas Karabela', 'pysubs3', 'One line description of project.',
    'Miscellaneous'),
 ]
 

@@ -1,12 +1,14 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 import dataclasses
 import re
 import warnings
 from numbers import Real
 from typing import Optional, Dict, Any, ClassVar, Union
 
-from .common import IntOrFloat
-from .time import ms_to_str, make_time
-from .timestamps import Timestamps, TimeType
+from pysubs3.common import IntOrFloat
+from pysubs3.time import ms_to_str, make_time
+from pysubs3.timestamps import Timestamps, TimeType
 
 
 @dataclasses.dataclass(repr=False, eq=False, order=False)
@@ -20,7 +22,7 @@ class SSAEvent:
 
     This class defines an ordering with respect to (start, end) timestamps.
 
-    .. tip :: Use :func:`pysubs2.make_time()` to get times in milliseconds.
+    .. tip :: Use :func:`pysubs3.make_time()` to get times in milliseconds.
 
     Example::
 
@@ -41,6 +43,7 @@ class SSAEvent:
     marginv: int = 0  #: Vertical margin
     effect: str = ""  #: Line effect
     type: str = "Dialogue"  #: Line type (Dialogue/Comment)
+    language: str = None
 
     @property
     def FIELDS(self):
@@ -100,12 +103,13 @@ class SSAEvent:
         text = self.OVERRIDE_SEQUENCE.sub("", text)
         text = text.replace(r"\h", " ")
         text = text.replace(r"\n", "\n")
-        text = text.replace(r"\N", "\n")
+        # text = text.replace(r"\N", "\n")
         return text
 
     @plaintext.setter
     def plaintext(self, text: str):
-        self.text = text.replace("\n", r"\N")
+        pass
+        # self.text = text.replace("\n", r"\N")
 
     def shift(self, h: IntOrFloat=0, m: IntOrFloat=0, s: IntOrFloat=0, ms: IntOrFloat=0,
               frames: Optional[int]=None, fps: Optional[Union[Real,Timestamps]]=None):

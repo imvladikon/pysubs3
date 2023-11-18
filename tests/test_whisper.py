@@ -1,4 +1,4 @@
-import pysubs2
+import pysubs3
 
 
 TRANSCRIBE_RESULT = {
@@ -16,7 +16,7 @@ TRANSCRIBE_RESULT = {
 
 
 def test_read_whisper_transcript_dict():
-    subs = pysubs2.load_from_whisper(TRANSCRIBE_RESULT)
+    subs = pysubs3.load_from_whisper(TRANSCRIBE_RESULT)
 
     e1, e2 = subs
     assert e1.start == 0
@@ -28,7 +28,7 @@ def test_read_whisper_transcript_dict():
 
 
 def test_read_whisper_segments_list():
-    subs = pysubs2.load_from_whisper(TRANSCRIBE_RESULT["segments"])
+    subs = pysubs3.load_from_whisper(TRANSCRIBE_RESULT["segments"])
 
     e1, e2 = subs
     assert e1.start == 0

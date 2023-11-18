@@ -1,4 +1,4 @@
-import pysubs2
+import pysubs3
 import tempfile
 import subprocess
 import shutil
@@ -38,7 +38,7 @@ def test_srt_to_microdvd():
         with open(inpath, "w", encoding="utf-8") as fp:
             fp.write(TEST_SRT_FILE)
 
-        cli = pysubs2.cli.Pysubs2CLI()
+        cli = pysubs3.cli.Pysubs2CLI()
         cli(["--to", "microdvd", "--fps", "1000", inpath])
 
         outpath = op.join(dirpath, "test.sub")
@@ -47,7 +47,7 @@ def test_srt_to_microdvd():
             assert out == TEST_MICRODVD_FILE
 
 def test_srt_to_microdvd_subprocess_pipe():
-    cmd = ["python", "-m", "pysubs2", "--to", "microdvd", "--fps", "1000"]
+    cmd = ["python", "-m", "pysubs3", "--to", "microdvd", "--fps", "1000"]
     output = subprocess.check_output(cmd, input=TEST_SRT_FILE, text=True)
     assert output.strip() == TEST_MICRODVD_FILE.strip()
 
@@ -59,7 +59,7 @@ def test_srt_to_microdvd_multiple_files():
             with open(inpath, "w", encoding="utf-8") as fp:
                 fp.write(TEST_SRT_FILE)
 
-        cli = pysubs2.cli.Pysubs2CLI()
+        cli = pysubs3.cli.Pysubs2CLI()
         cli(["--to", "microdvd", "--fps", "1000"] + inpaths)
 
         outpaths = [p.replace(".srt", ".sub") for p in inpaths]
@@ -74,7 +74,7 @@ def test_microdvd_to_srt():
         with open(inpath, "w", encoding="utf-8") as fp:
             fp.write(TEST_MICRODVD_FILE)
 
-        cli = pysubs2.cli.Pysubs2CLI()
+        cli = pysubs3.cli.Pysubs2CLI()
         cli(["--to", "srt", inpath])
 
         outpath = op.join(dirpath, "test.srt")
@@ -100,7 +100,7 @@ def test_srt_shift():
         with open(inpath, "w", encoding="utf-8") as fp:
             fp.write(TEST_SRT_FILE)
 
-        cli = pysubs2.cli.Pysubs2CLI()
+        cli = pysubs3.cli.Pysubs2CLI()
         cli(["--shift", "1h1.5s", inpath])
 
         with open(outpath, encoding="utf-8") as fp:
@@ -113,7 +113,7 @@ def test_srt_shift_back():
         with open(inpath, "w", encoding="utf-8") as fp:
             fp.write(TEST_SRT_FILE_SHIFTED)
 
-        cli = pysubs2.cli.Pysubs2CLI()
+        cli = pysubs3.cli.Pysubs2CLI()
         cli(["--shift-back", "1h1.5s", inpath])
 
         with open(outpath, encoding="utf-8") as fp:
@@ -130,7 +130,7 @@ def test_srt_shift_to_output_dir():
             outdirpath2 = op.join(outdirpath, "subdir-that-must-be-created")
             outpath = op.join(outdirpath2, "test.srt")
 
-            cli = pysubs2.cli.Pysubs2CLI()
+            cli = pysubs3.cli.Pysubs2CLI()
             cli(["--shift", "1h1.5s", "-o", outdirpath2, inpath])
 
             with open(outpath, encoding="utf-8") as fp:
@@ -257,7 +257,7 @@ def test_srt_clean():
         with open(inpath, "w", encoding="utf-8") as fp:
             fp.write(TEST_SUBSTATION_WITH_KARAOKE)
 
-        cli = pysubs2.cli.Pysubs2CLI()
+        cli = pysubs3.cli.Pysubs2CLI()
         cli(["--to", "srt", "--clean", inpath])
 
         with open(outpath, encoding="utf-8") as fp:
@@ -275,7 +275,7 @@ def test_srt_clean_styling():
             fp.write(TEST_SUBSTATION_WITH_ITALICS)
 
         # test standard
-        cli = pysubs2.cli.Pysubs2CLI()
+        cli = pysubs3.cli.Pysubs2CLI()
         cli(["--to", "srt", inpath])
 
         with open(outpath, encoding="utf-8") as fp:
@@ -283,7 +283,7 @@ def test_srt_clean_styling():
             assert out.strip() == TEST_SUBSTATION_WITH_ITALICS_SRT_OUTPUT.strip()
 
         # test clean
-        cli = pysubs2.cli.Pysubs2CLI()
+        cli = pysubs3.cli.Pysubs2CLI()
         cli(["--to", "srt", "--clean", inpath])
 
         with open(outpath, encoding="utf-8") as fp:
@@ -300,7 +300,7 @@ def test_srt_keep_ssa_tags():
         with open(path, "w", encoding="utf-8") as fp:
             fp.write(TEST_SRT_KEEP_SSA_TAGS)
 
-        cli = pysubs2.cli.Pysubs2CLI()
+        cli = pysubs3.cli.Pysubs2CLI()
         cli(["--to", "srt", path])
 
         with open(path, encoding="utf-8") as fp:
@@ -311,7 +311,7 @@ def test_srt_keep_ssa_tags():
         with open(path, "w", encoding="utf-8") as fp:
             fp.write(TEST_SRT_KEEP_SSA_TAGS)
 
-        cli = pysubs2.cli.Pysubs2CLI()
+        cli = pysubs3.cli.Pysubs2CLI()
         cli(["--to", "srt", "--srt-keep-ssa-tags", path])
 
         with open(path, encoding="utf-8") as fp:
@@ -327,7 +327,7 @@ def test_srt_keep_ssa_tags_mixed_with_html():
         with open(path, "w", encoding="utf-8") as fp:
             fp.write(TEST_SRT_KEEP_SSA_TAGS_MIXED_WITH_HTML)
 
-        cli = pysubs2.cli.Pysubs2CLI()
+        cli = pysubs3.cli.Pysubs2CLI()
         cli(["--to", "srt", path])
 
         with open(path, encoding="utf-8") as fp:
@@ -338,7 +338,7 @@ def test_srt_keep_ssa_tags_mixed_with_html():
         with open(path, "w", encoding="utf-8") as fp:
             fp.write(TEST_SRT_KEEP_SSA_TAGS_MIXED_WITH_HTML)
 
-        cli = pysubs2.cli.Pysubs2CLI()
+        cli = pysubs3.cli.Pysubs2CLI()
         cli(["--to", "srt", "--srt-keep-ssa-tags", path])
 
         with open(path, encoding="utf-8") as fp:
@@ -349,7 +349,7 @@ def test_srt_keep_ssa_tags_mixed_with_html():
         with open(path, "w", encoding="utf-8") as fp:
             fp.write(TEST_SRT_KEEP_SSA_TAGS_MIXED_WITH_HTML)
 
-        cli = pysubs2.cli.Pysubs2CLI()
+        cli = pysubs3.cli.Pysubs2CLI()
         cli(["--to", "srt", "--srt-keep-ssa-tags", "--srt-keep-html-tags", path])
 
         with open(path, encoding="utf-8") as fp:
@@ -365,7 +365,7 @@ def test_srt_keep_unknown_html_tags():
         with open(path, "w", encoding="utf-8") as fp:
             fp.write(TEST_SRT_KEEP_UNKNOWN_HTML_TAGS)
 
-        cli = pysubs2.cli.Pysubs2CLI()
+        cli = pysubs3.cli.Pysubs2CLI()
         cli(["--to", "srt", path])
 
         with open(path, encoding="utf-8") as fp:
@@ -376,7 +376,7 @@ def test_srt_keep_unknown_html_tags():
         with open(path, "w", encoding="utf-8") as fp:
             fp.write(TEST_SRT_KEEP_UNKNOWN_HTML_TAGS)
 
-        cli = pysubs2.cli.Pysubs2CLI()
+        cli = pysubs3.cli.Pysubs2CLI()
         cli(["--to", "srt", "--srt-keep-unknown-html-tags", path])
 
         with open(path, encoding="utf-8") as fp:

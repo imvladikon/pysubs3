@@ -5,7 +5,7 @@ test related to Timestamps class
 
 import json
 import pytest
-from pysubs2 import SSAFile, Timestamps, TimeType
+from pysubs3 import SSAFile, Timestamps, TimeType
 import os.path as op
 
 TIMESTAMPS_PATH = op.join(op.dirname(__file__), "data/timestamps/timestamps.txt")

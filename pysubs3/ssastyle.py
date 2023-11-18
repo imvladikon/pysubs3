@@ -1,8 +1,10 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 import warnings
 from typing import Dict, Any, ClassVar
 import dataclasses
 
-from .common import Color, Alignment
+from pysubs3.common import Color, Alignment
 
 @dataclasses.dataclass(repr=False)
 class SSAStyle:
@@ -30,11 +32,11 @@ class SSAStyle:
 
     fontname: str = "Arial"  #: Font name
     fontsize: float = 20.0  #: Font size (in pixels)
-    primarycolor: Color = dataclasses.field(default_factory=lambda: Color(255, 255, 255, 0))  #: Primary color (:class:`pysubs2.Color` instance)
-    secondarycolor: Color = dataclasses.field(default_factory=lambda: Color(255, 0, 0, 0))  #: Secondary color (:class:`pysubs2.Color` instance)
-    tertiarycolor: Color = dataclasses.field(default_factory=lambda: Color(0, 0, 0, 0))  #: Tertiary color (:class:`pysubs2.Color` instance)
-    outlinecolor: Color = dataclasses.field(default_factory=lambda: Color(0, 0, 0, 0))  #: Outline color (:class:`pysubs2.Color` instance)
-    backcolor: Color = dataclasses.field(default_factory=lambda: Color(0, 0, 0, 0))  #: Back, ie. shadow color (:class:`pysubs2.Color` instance)
+    primarycolor: Color = dataclasses.field(default_factory=lambda: Color(255, 255, 255, 0))  #: Primary color (:class:`pysubs3.Color` instance)
+    secondarycolor: Color = dataclasses.field(default_factory=lambda: Color(255, 0, 0, 0))  #: Secondary color (:class:`pysubs3.Color` instance)
+    tertiarycolor: Color = dataclasses.field(default_factory=lambda: Color(0, 0, 0, 0))  #: Tertiary color (:class:`pysubs3.Color` instance)
+    outlinecolor: Color = dataclasses.field(default_factory=lambda: Color(0, 0, 0, 0))  #: Outline color (:class:`pysubs3.Color` instance)
+    backcolor: Color = dataclasses.field(default_factory=lambda: Color(0, 0, 0, 0))  #: Back, ie. shadow color (:class:`pysubs3.Color` instance)
     bold: bool = False  #: Bold
     italic: bool = False  #: Italic
     underline: bool = False  #: Underline (ASS only)
@@ -46,7 +48,7 @@ class SSAStyle:
     borderstyle: int = 1  #: Border style (1=outline, 3=box)
     outline: float = 2.0  #: Outline width (in pixels)
     shadow: float = 2.0  #: Shadow depth (in pixels)
-    alignment: Alignment = Alignment.BOTTOM_CENTER  #: Text alignment (:class:`pysubs2.Alignment` instance); the underlying integer uses numpad-style alignment, eg. 7 is "top left" (that is, ASS alignment semantics). You can also use ``int`` here, though it is discouraged.
+    alignment: Alignment = Alignment.BOTTOM_CENTER  #: Text alignment (:class:`pysubs3.Alignment` instance); the underlying integer uses numpad-style alignment, eg. 7 is "top left" (that is, ASS alignment semantics). You can also use ``int`` here, though it is discouraged.
     marginl: int = 10  #: Left margin (in pixels)
     marginr: int = 10  #: Right margin (in pixels)
     marginv: int = 10  #: Vertical margin (in pixels)
@@ -55,9 +57,9 @@ class SSAStyle:
 
     # The following attributes cannot be defined for SSA styles themselves,
     # but can be used in override tags and thus are useful to keep here
-    # for the `pysubs2.substation.parse_tags()` interface which returns
+    # for the `pysubs3.substation.parse_tags()` interface which returns
     # SSAStyles for text fragments.
-    drawing: bool = False  #: Indicates that text span is a SSA vector drawing, see :func:`pysubs2.substation.parse_tags()`
+    drawing: bool = False  #: Indicates that text span is a SSA vector drawing, see :func:`pysubs3.substation.parse_tags()`
 
     def copy(self) -> "SSAStyle":
         return SSAStyle(**self.as_dict())

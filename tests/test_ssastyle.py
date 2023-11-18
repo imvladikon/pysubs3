@@ -1,6 +1,6 @@
 import pytest
 
-from pysubs2 import SSAStyle
+from pysubs3 import SSAStyle
 
 def test_repr_plain():
     ev = SSAStyle(fontname="Calibri", fontsize=36)

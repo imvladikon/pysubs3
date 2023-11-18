@@ -3,7 +3,7 @@ test of SubStation [Fonts] handling
 
 """
 
-from pysubs2 import SSAFile
+from pysubs3 import SSAFile
 import os.path as op
 
 

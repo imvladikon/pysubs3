@@ -1,12 +1,12 @@
 """
-pysubs2.time tests
+pysubs3.time tests
 
 """
 
 from fractions import Fraction 
 import pytest
 
-from pysubs2.time import *
+from pysubs3.time import *
 
 
 # helper functions

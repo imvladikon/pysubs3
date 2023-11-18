@@ -1,4 +1,4 @@
-from pysubs2 import SSAFile, SSAEvent, SSAStyle, Color
+from pysubs3 import SSAFile, SSAEvent, SSAStyle, Color
 
 def test_write_read():
     subs = SSAFile()

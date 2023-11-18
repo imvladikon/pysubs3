@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 from collections.abc import MutableSequence
 import io
 from io import open
@@ -7,14 +9,13 @@ import os.path
 import logging
 from typing import Optional, List, Dict, Iterable, Any, Union, overload, Iterator
 
-
-from .common import IntOrFloat
-from .formats import autodetect_format, get_format_class, get_format_identifier
-from .substation import is_valid_field_content
-from .ssaevent import SSAEvent
-from .ssastyle import SSAStyle
-from .time import make_time, ms_to_str
-from .timestamps import Timestamps
+from pysubs3.common import IntOrFloat
+from pysubs3.formats import autodetect_format, get_format_class, get_format_identifier
+from pysubs3.substation import is_valid_field_content
+from pysubs3.ssaevent import SSAEvent
+from pysubs3.ssastyle import SSAStyle
+from pysubs3.time import ms_to_str
+from pysubs3.timestamps import Timestamps
 
 
 class SSAFile(MutableSequence):
@@ -38,25 +39,49 @@ class SSAFile(MutableSequence):
     DEFAULT_INFO = {
         "WrapStyle": "0",
         "ScaledBorderAndShadow": "yes",
-        "Collisions": "Normal"
+        "Collisions": "Normal",
     }
 
     def __init__(self) -> None:
-        self.events: List[SSAEvent] = []  #: List of :class:`SSAEvent` instances, ie. individual subtitles.
-        self.styles: Dict[str, SSAStyle] = {"Default": SSAStyle.DEFAULT_STYLE.copy()}  #: Dict of :class:`SSAStyle` instances.
-        self.info: Dict[str, str] = self.DEFAULT_INFO.copy()  #: Dict with script metadata, ie. ``[Script Info]``.
-        self.aegisub_project: Dict[str, str] = {}  #: Dict with Aegisub project, ie. ``[Aegisub Project Garbage]``.
-        self.fonts_opaque: Dict[str, Any] = {}  #: Dict with embedded fonts, ie. ``[Fonts]``.
-        self.graphics_opaque: Dict[str, Any] = {}  #: Dict with embedded images, ie. ``[Graphics]``.
-        self.fps: Optional[float] = None  #: Framerate used when reading the file, if applicable.
-        self.format: Optional[str] = None  #: Format of source subtitle file, if applicable, eg. ``"srt"``.
+        self.events: List[
+            SSAEvent
+        ] = []  #: List of :class:`SSAEvent` instances, ie. individual subtitles.
+        self.styles: Dict[str, SSAStyle] = {
+            "Default": SSAStyle.DEFAULT_STYLE.copy()
+        }  #: Dict of :class:`SSAStyle` instances.
+        self.info: Dict[
+            str, str
+        ] = self.DEFAULT_INFO.copy()  #: Dict with script metadata, ie. ``[Script Info]``.
+        self.aegisub_project: Dict[
+            str, str
+        ] = {}  #: Dict with Aegisub project, ie. ``[Aegisub Project Garbage]``.
+        self.fonts_opaque: Dict[
+            str, Any
+        ] = {}  #: Dict with embedded fonts, ie. ``[Fonts]``.
+        self.graphics_opaque: Dict[
+            str, Any
+        ] = {}  #: Dict with embedded images, ie. ``[Graphics]``.
+        self.fps: Optional[
+            float
+        ] = None  #: Framerate used when reading the file, if applicable.
+        self.format: Optional[
+            str
+        ] = None  #: Format of source subtitle file, if applicable, eg. ``"srt"``.
 
     # ------------------------------------------------------------------------
     # I/O methods
     # ------------------------------------------------------------------------
 
     @classmethod
-    def load(cls, path: str, encoding: str="utf-8", format_: Optional[str]=None, fps: Optional[float]=None, **kwargs) -> "SSAFile":
+    def load(
+            cls,
+            path: str,
+            encoding: str = "utf-8",
+            format_: Optional[str] = None,
+            fps: Optional[float] = None,
+            detect_language: bool = False,
+            **kwargs,
+    ) -> "SSAFile":
         """
         Load subtitle file from given path.
 
@@ -65,7 +90,7 @@ class SSAFile(MutableSequence):
         See also:
             Specific formats may implement additional loading options,
             please refer to documentation of the implementation classes
-            (eg. :meth:`pysubs2.subrip.SubripFormat.from_file()`)
+            (eg. :meth:`pysubs3.subrip.SubripFormat.from_file()`)
 
         Arguments:
             path (str): Path to subtitle file.
@@ -88,26 +113,36 @@ class SSAFile(MutableSequence):
         Raises:
             IOError
             UnicodeDecodeError
-            pysubs2.exceptions.UnknownFPSError
-            pysubs2.exceptions.UnknownFormatIdentifierError
-            pysubs2.exceptions.FormatAutodetectionError
+            pysubs3.exceptions.UnknownFPSError
+            pysubs3.exceptions.UnknownFormatIdentifierError
+            pysubs3.exceptions.FormatAutodetectionError
 
         Note:
-            pysubs2 may autodetect subtitle format and/or framerate. These
+            pysubs3 may autodetect subtitle format and/or framerate. These
             values are set as :attr:`SSAFile.format` and :attr:`SSAFile.fps`
             attributes.
 
         Example:
-            >>> subs1 = pysubs2.load("subrip-subtitles.srt")
-            >>> subs2 = pysubs2.load("microdvd-subtitles.sub", fps=23.976)
-            >>> subs3 = pysubs2.load("subrip-subtitles-with-fancy-tags.srt", keep_unknown_html_tags=True)
+            >>> subs1 = pysubs3.load("subrip-subtitles.srt")
+            >>> subs2 = pysubs3.load("microdvd-subtitles.sub", fps=23.976)
+            >>> subs3 = pysubs3.load("subrip-subtitles-with-fancy-tags.srt", keep_unknown_html_tags=True)
 
         """
         with open(path, encoding=encoding) as fp:
-            return cls.from_file(fp, format_, fps=fps, **kwargs)
+            return cls.from_file(fp,
+                                 format_,
+                                 fps=fps,
+                                 detect_language=detect_language,
+                                 **kwargs)
 
     @classmethod
-    def from_string(cls, string: str, format_: Optional[str]=None, fps: Optional[float]=None, **kwargs) -> "SSAFile":
+    def from_string(
+            cls,
+            string: str,
+            format_: Optional[str] = None,
+            fps: Optional[float] = None,
+            **kwargs,
+    ) -> "SSAFile":
         """
         Load subtitle file from string.
 
@@ -133,7 +168,14 @@ class SSAFile(MutableSequence):
         return cls.from_file(fp, format_, fps=fps, **kwargs)
 
     @classmethod
-    def from_file(cls, fp: io.TextIOBase, format_: Optional[str]=None, fps: Optional[float]=None, **kwargs) -> "SSAFile":
+    def from_file(
+            cls,
+            fp: io.TextIOBase,
+            format_: Optional[str] = None,
+            fps: Optional[float] = None,
+            detect_language: bool = False,
+            **kwargs,
+    ) -> "SSAFile":
         """
         Read subtitle file from file object.
 
@@ -161,13 +203,25 @@ class SSAFile(MutableSequence):
             fp = io.StringIO(text)
 
         impl = get_format_class(format_)
-        subs = cls() # an empty subtitle file
+        subs = cls()  # an empty subtitle file
         subs.format = format_
         subs.fps = fps
-        impl.from_file(subs, fp, format_, fps=fps, **kwargs)
+        impl.from_file(subs,
+                       fp,
+                       format_,
+                       fps=fps,
+                       detect_language=detect_language,
+                       **kwargs)
         return subs
 
-    def save(self, path: str, encoding: str="utf-8", format_: Optional[str]=None, fps: Optional[float]=None, **kwargs):
+    def save(
+            self,
+            path: str,
+            encoding: str = "utf-8",
+            format_: Optional[str] = None,
+            fps: Optional[float] = None,
+            **kwargs,
+    ):
         """
         Save subtitle file to given path.
 
@@ -176,7 +230,7 @@ class SSAFile(MutableSequence):
         See also:
             Specific formats may implement additional saving options,
             please refer to documentation of the implementation classes
-            (eg. :meth:`pysubs2.subrip.SubripFormat.to_file()`)
+            (eg. :meth:`pysubs3.subrip.SubripFormat.to_file()`)
 
         Arguments:
             path (str): Path to subtitle file.
@@ -199,9 +253,9 @@ class SSAFile(MutableSequence):
         Raises:
             IOError
             UnicodeEncodeError
-            pysubs2.exceptions.UnknownFPSError
-            pysubs2.exceptions.UnknownFormatIdentifierError
-            pysubs2.exceptions.UnknownFileExtensionError
+            pysubs3.exceptions.UnknownFPSError
+            pysubs3.exceptions.UnknownFormatIdentifierError
+            pysubs3.exceptions.UnknownFileExtensionError
 
         """
         if format_ is None:
@@ -211,7 +265,7 @@ class SSAFile(MutableSequence):
         with open(path, "w", encoding=encoding) as fp:
             self.to_file(fp, format_, fps=fps, **kwargs)
 
-    def to_string(self, format_: str, fps: Optional[float]=None, **kwargs) -> str:
+    def to_string(self, format_: str, fps: Optional[float] = None, **kwargs) -> str:
         """
         Get subtitle file as a string.
 
@@ -225,7 +279,9 @@ class SSAFile(MutableSequence):
         self.to_file(fp, format_, fps=fps, **kwargs)
         return fp.getvalue()
 
-    def to_file(self, fp: io.TextIOBase, format_: str, fps: Optional[float]=None, **kwargs):
+    def to_file(
+            self, fp: io.TextIOBase, format_: str, fps: Optional[float] = None, **kwargs
+    ):
         """
         Write subtitle file to file object.
 
@@ -247,8 +303,15 @@ class SSAFile(MutableSequence):
     # Retiming subtitles
     # ------------------------------------------------------------------------
 
-    def shift(self, h: IntOrFloat=0, m: IntOrFloat=0, s: IntOrFloat=0, ms: IntOrFloat=0,
-              frames: Optional[int]=None, fps: Optional[Union[Real,Timestamps]]=None):
+    def shift(
+            self,
+            h: IntOrFloat = 0,
+            m: IntOrFloat = 0,
+            s: IntOrFloat = 0,
+            ms: IntOrFloat = 0,
+            frames: Optional[int] = None,
+            fps: Optional[Union[Real, Timestamps]] = None,
+    ):
         """
         Shift all subtitles by constant time amount.
 
@@ -284,7 +347,9 @@ class SSAFile(MutableSequence):
 
         """
         if in_fps <= 0 or out_fps <= 0:
-            raise ValueError(f"Framerates must be positive, cannot transform {in_fps} -> {out_fps}")
+            raise ValueError(
+                f"Framerates must be positive, cannot transform {in_fps} -> {out_fps}"
+            )
 
         ratio = in_fps / out_fps
         for line in self:
@@ -324,7 +389,7 @@ class SSAFile(MutableSequence):
             if line.style == old_name:
                 line.style = new_name
 
-    def import_styles(self, subs: "SSAFile", overwrite: bool=True):
+    def import_styles(self, subs: "SSAFile", overwrite: bool = True):
         """
         Merge in styles from other SSAFile.
 
@@ -399,11 +464,16 @@ class SSAFile(MutableSequence):
                     logging.debug("%r missing in other.info", key)
                     return False
                 elif self_info != other_info:
-                    logging.debug("info %r differs (self=%r, other=%r)", key, self_info, other_info)
+                    logging.debug(
+                        "info %r differs (self=%r, other=%r)", key, self_info, other_info
+                    )
                     return False
 
             for key in set(chain(self.fonts_opaque.keys(), other.fonts_opaque.keys())):
-                self_font, other_font = self.fonts_opaque.get(key), other.fonts_opaque.get(key)
+                self_font, other_font = self.fonts_opaque.get(
+                    key), other.fonts_opaque.get(
+                    key
+                )
                 if self_font is None:
                     logging.debug("%r missing in self.fonts_opaque", key)
                     return False
@@ -411,11 +481,20 @@ class SSAFile(MutableSequence):
                     logging.debug("%r missing in other.fonts_opaque", key)
                     return False
                 elif self_font != other_font:
-                    logging.debug("fonts_opaque %r differs (self=%r, other=%r)", key, self_font, other_font)
+                    logging.debug(
+                        "fonts_opaque %r differs (self=%r, other=%r)",
+                        key,
+                        self_font,
+                        other_font,
+                    )
                     return False
 
-            for key in set(chain(self.graphics_opaque.keys(), other.graphics_opaque.keys())):
-                self_image, other_image = self.graphics_opaque.get(key), other.graphics_opaque.get(key)
+            for key in set(
+                    chain(self.graphics_opaque.keys(), other.graphics_opaque.keys())
+            ):
+                self_image, other_image = self.graphics_opaque.get(
+                    key
+                ), other.graphics_opaque.get(key)
                 if self_image is None:
                     logging.debug("%r missing in self.graphics_opaque", key)
                     return False
@@ -423,7 +502,12 @@ class SSAFile(MutableSequence):
                     logging.debug("%r missing in other.graphics_opaque", key)
                     return False
                 elif self_image != other_image:
-                    logging.debug("graphics_opaque %r differs (self=%r, other=%r)", key, self_image, other_image)
+                    logging.debug(
+                        "graphics_opaque %r differs (self=%r, other=%r)",
+                        key,
+                        self_image,
+                        other_image,
+                    )
                     return False
 
             for key in set(chain(self.styles.keys(), other.styles.keys())):
@@ -436,19 +520,33 @@ class SSAFile(MutableSequence):
                     return False
                 elif self_style != other_style:
                     for k in self_style.FIELDS:
-                        if getattr(self_style, k) != getattr(other_style, k): logging.debug("difference in field %r", k)
-                    logging.debug("style %r differs (self=%r, other=%r)", key, self_style.as_dict(), other_style.as_dict())
+                        if getattr(self_style, k) != getattr(other_style, k):
+                            logging.debug("difference in field %r", k)
+                    logging.debug(
+                        "style %r differs (self=%r, other=%r)",
+                        key,
+                        self_style.as_dict(),
+                        other_style.as_dict(),
+                    )
                     return False
 
             if len(self) != len(other):
-                logging.debug("different # of subtitles (self=%d, other=%d)", len(self), len(other))
+                logging.debug(
+                    "different # of subtitles (self=%d, other=%d)", len(self), len(other)
+                )
                 return False
 
             for i, (self_event, other_event) in enumerate(zip(self.events, other.events)):
                 if not self_event.equals(other_event):
                     for k in self_event.FIELDS:
-                        if getattr(self_event, k) != getattr(other_event, k): logging.debug("difference in field %r", k)
-                    logging.debug("event %d differs (self=%r, other=%r)", i, self_event.as_dict(), other_event.as_dict())
+                        if getattr(self_event, k) != getattr(other_event, k):
+                            logging.debug("difference in field %r", k)
+                    logging.debug(
+                        "event %d differs (self=%r, other=%r)",
+                        i,
+                        self_event.as_dict(),
+                        other_event.as_dict(),
+                    )
                     return False
 
             return True

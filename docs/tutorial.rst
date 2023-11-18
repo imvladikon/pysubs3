@@ -14,6 +14,86 @@ Let's settle on a simple subtitle file first.
     ... 1
     ... 00:00:00,000 --> 00:01:00,000
     ... Once upon a time,
+    ...
+    ... 2
+    ... 00:01:00,000 --> 00:02:00,000
+    ... there was a SubRip file
+    ... with two subtitles.
+    ... """
+    >>> with open("subtitles.srt", "w") as fp:
+    ...      fp.write(SIMPLE_FILE)
+
+Now that we have a real file on the harddrive, let's import pysubs2 and load it.
+
+    >>> import pysubs3
+    >>> subs = pysubs2.load("subtitles.srt")
+    >>> subs
+    <SSAFile with 2 events and 1 styles, last timestamp 0:02:00>
+
+    >>> SIMPLE_FILE = """\
+    ... 1
+    ... 00:00:00,000 --> 00:01:00,000
+    ... Once upon a time,
+    ...
+    ... 2
+    ... 00:01:00,000 --> 00:02:00,000
+    ... there was a SubRip file
+    ... with two subtitles.
+    ... """
+    >>> with open("subtitles.srt", "w") as fp:
+    ...      fp.write(SIMPLE_FILE)
+
+Now that we have a real file on the harddrive, let's import pysubs2 and load it.
+
+    >>> import pysubs3
+    >>> subs = pysubs2.load("subtitles.srt")
+    >>> subs
+    <SSAFile with 2 events and 1 styles, last timestamp 0:02:00>
+
+    >>> SIMPLE_FILE = """\
+    ... 1
+    ... 00:00:00,000 --> 00:01:00,000
+    ... Once upon a time,
+    ...
+    ... 2
+    ... 00:01:00,000 --> 00:02:00,000
+    ... there was a SubRip file
+    ... with two subtitles.
+    ... """
+    >>> with open("subtitles.srt", "w") as fp:
+    ...      fp.write(SIMPLE_FILE)
+
+Now that we have a real file on the harddrive, let's import pysubs2 and load it.
+
+    >>> import pysubs2
+    >>> subs = pysubs3.load("subtitles.srt")
+    >>> subs
+    <SSAFile with 2 events and 1 styles, last timestamp 0:02:00>
+
+    >>> SIMPLE_FILE = """\
+    ... 1
+    ... 00:00:00,000 --> 00:01:00,000
+    ... Once upon a time,
+    ...
+    ... 2
+    ... 00:01:00,000 --> 00:02:00,000
+    ... there was a SubRip file
+    ... with two subtitles.
+    ... """
+    >>> with open("subtitles.srt", "w") as fp:
+    ...      fp.write(SIMPLE_FILE)
+
+Now that we have a real file on the harddrive, let's import pysubs2 and load it.
+
+    >>> import pysubs2
+    >>> subs = pysubs3.load("subtitles.srt")
+    >>> subs
+    <SSAFile with 2 events and 1 styles, last timestamp 0:02:00>
+
+    >>> SIMPLE_FILE = """\
+    ... 1
+    ... 00:00:00,000 --> 00:01:00,000
+    ... Once upon a time,
     ... 
     ... 2
     ... 00:01:00,000 --> 00:02:00,000

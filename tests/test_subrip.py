@@ -1,13 +1,13 @@
 """
-pysubs2.formats.subrip tests
+pysubs3.formats.subrip tests
 
 """
 
 from textwrap import dedent
 import pytest
 
-from pysubs2 import SSAFile, SSAEvent, make_time
-from pysubs2.subrip import MAX_REPRESENTABLE_TIME
+from pysubs3 import SSAFile, SSAEvent, make_time
+from pysubs3.subrip import MAX_REPRESENTABLE_TIME
 
 def test_simple_write():
     subs = SSAFile()

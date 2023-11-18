@@ -1,6 +1,6 @@
 import pytest
 
-from pysubs2 import SSAEvent, make_time
+from pysubs3 import SSAEvent, make_time
 
 def test_repr_dialogue():
     ev = SSAEvent(start=make_time(m=1, s=30), end=make_time(m=1, s=35), text="Hello\\Nworld!")

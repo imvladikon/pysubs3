@@ -2,7 +2,7 @@ from textwrap import dedent
 from PIL import Image, ImageDraw, ImageFont
 from datetime import timedelta
 from fractions import Fraction
-import pysubs2
+import pysubs3
 import subprocess
 import os
 
@@ -36,7 +36,7 @@ with open("test_video.srt", "w") as fp:
         canvas.save(f"img/test_video_{frame:04}.png")
 
         print(frame+1, file=fp)
-        print(pysubs2.formats.SubripFormat.ms_to_timestamp(ms1), "-->", pysubs2.formats.SubripFormat.ms_to_timestamp(ms1_next), file=fp)
+        print(pysubs3.formats.SubripFormat.ms_to_timestamp(ms1), "-->", pysubs3.formats.SubripFormat.ms_to_timestamp(ms1_next), file=fp)
         print(text, file=fp)
         print(file=fp)
 
@@ -44,7 +44,7 @@ with open("test_video.srt", "w") as fp:
 subprocess.check_call(["ffmpeg", "-y", "-r", f"{float(fps):.4f}", "-i", "img/test_video_%04d.png", "-pix_fmt", "yuv420p", "test_video.mkv"])
 subprocess.check_call(["mkvextract", "test_video.mkv", "timestamps_v2", "0:ts-track0.txt"])
 
-# subs = pysubs2.load("test_video.srt")
+# subs = pysubs3.load("test_video.srt")
 # subs.save("test_video.ass")
 #
 # subprocess.check_call(["ffmpeg", "-y", "-i", "test_video.mkv", "-vf", "subtitles=test_video.ass", "test_video_with_ass.mkv"])

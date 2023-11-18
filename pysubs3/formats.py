@@ -1,14 +1,16 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 from typing import Dict, Type
 
-from .formatbase import FormatBase
-from .microdvd import MicroDVDFormat
-from .subrip import SubripFormat
-from .jsonformat import JSONFormat
-from .substation import SubstationFormat
-from .mpl2 import MPL2Format
-from .tmp import TmpFormat
-from .webvtt import WebVTTFormat
-from .exceptions import *
+from pysubs3.formatbase import FormatBase
+from pysubs3.microdvd import MicroDVDFormat
+from pysubs3.subrip import SubripFormat
+from pysubs3.jsonformat import JSONFormat
+from pysubs3.substation import SubstationFormat
+from pysubs3.mpl2 import MPL2Format
+from pysubs3.tmp import TmpFormat
+from pysubs3.webvtt import WebVTTFormat
+from pysubs3.exceptions import *
 
 #: Dict mapping file extensions to format identifiers.
 FILE_EXTENSION_TO_FORMAT_IDENTIFIER: Dict[str, str] = {

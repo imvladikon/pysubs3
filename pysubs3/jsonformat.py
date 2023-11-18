@@ -1,9 +1,11 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 import dataclasses
 import json
-from .common import Color
-from .ssaevent import SSAEvent
-from .ssastyle import SSAStyle
-from .formatbase import FormatBase
+from pysubs3.common import Color
+from pysubs3.ssaevent import SSAEvent
+from pysubs3.ssastyle import SSAStyle
+from pysubs3.formatbase import FormatBase
 
 
 # We're using Color dataclass
@@ -17,19 +19,19 @@ class EnhancedJSONEncoder(json.JSONEncoder):
 
 class JSONFormat(FormatBase):
     """
-    Implementation of JSON subtitle pseudo-format (serialized pysubs2 internal representation)
+    Implementation of JSON subtitle pseudo-format (serialized pysubs3 internal representation)
 
     This is essentially SubStation Alpha as JSON.
     """
     @classmethod
     def guess_format(cls, text):
-        """See :meth:`pysubs2.formats.FormatBase.guess_format()`"""
+        """See :meth:`pysubs3.formats.FormatBase.guess_format()`"""
         if text.startswith("{\""):
             return "json"
 
     @classmethod
     def from_file(cls, subs, fp, format_, **kwargs):
-        """See :meth:`pysubs2.formats.FormatBase.from_file()`"""
+        """See :meth:`pysubs3.formats.FormatBase.from_file()`"""
         data = json.load(fp)
 
         subs.info.clear()
@@ -48,7 +50,7 @@ class JSONFormat(FormatBase):
 
     @classmethod
     def to_file(cls, subs, fp, format_, **kwargs):
-        """See :meth:`pysubs2.formats.FormatBase.to_file()`"""
+        """See :meth:`pysubs3.formats.FormatBase.to_file()`"""
         data = {
             "info": dict(**subs.info),
             "styles": {name: sty.as_dict() for name, sty in subs.styles.items()},

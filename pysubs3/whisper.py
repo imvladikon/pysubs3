@@ -1,13 +1,8 @@
-"""
-Support for the OpenAI Whisper speech recognition library.
-
-See https://github.com/openai/whisper
-
-"""
-
-from .ssaevent import SSAEvent
-from .ssafile import SSAFile
-from .time import make_time
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+from pysubs3.ssaevent import SSAEvent
+from pysubs3.ssafile import SSAFile
+from pysubs3.time import make_time
 from typing import Union, List, Dict, Any
 
 
@@ -17,10 +12,10 @@ def load_from_whisper(result_or_segments: Union[Dict[str, Any], List[Dict[str, A
 
     Example:
         >>> import whisper
-        >>> import pysubs2
+        >>> import pysubs3
         >>> model = whisper.load_model("base")
         >>> result = model.transcribe("audio.mp3")
-        >>> subs = pysubs2.load_from_whisper(result)
+        >>> subs = pysubs3.load_from_whisper(result)
         >>> subs.save("audio.ass")
 
     See also:

@@ -1,12 +1,14 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 from numbers import Real
 from typing import Union
 import re
-from .exceptions import UnknownFPSError
-from .ssaevent import SSAEvent
-from .ssastyle import SSAStyle
-from .formatbase import FormatBase
-from .substation import parse_tags
-from .timestamps import Timestamps, TimeType
+from pysubs3.exceptions import UnknownFPSError
+from pysubs3.ssaevent import SSAEvent
+from pysubs3.ssastyle import SSAStyle
+from pysubs3.formatbase import FormatBase
+from pysubs3.substation import parse_tags
+from pysubs3.timestamps import Timestamps, TimeType
 
 #: Matches a MicroDVD line.
 MICRODVD_LINE = re.compile(r" *\{ *(\d+) *\} *\{ *(\d+) *\}(.+)")
@@ -16,13 +18,13 @@ class MicroDVDFormat(FormatBase):
     """MicroDVD subtitle format implementation"""
     @classmethod
     def guess_format(cls, text):
-        """See :meth:`pysubs2.formats.FormatBase.guess_format()`"""
+        """See :meth:`pysubs3.formats.FormatBase.guess_format()`"""
         if any(map(MICRODVD_LINE.match, text.splitlines())):
             return "microdvd"
 
     @classmethod
     def from_file(cls, subs, fp, format_, fps:Union[None,Real,Timestamps] = None, **kwargs):
-        """See :meth:`pysubs2.formats.FormatBase.from_file()`"""
+        """See :meth:`pysubs3.formats.FormatBase.from_file()`"""
         if isinstance(fps, Real):
             timestamps = Timestamps.from_fps(fps)
         elif isinstance(fps, Timestamps):
@@ -54,7 +56,7 @@ class MicroDVDFormat(FormatBase):
             end = timestamps.frames_to_ms(fend, TimeType.END)
 
             def prepare_text(text):
-                text = text.replace("|", r"\N")
+                text = text.replace("|", "\n")
 
                 def style_replacer(match: re.Match) -> str:
                     tags = [c for c in "biu" if c in match.group(0)]
@@ -73,7 +75,7 @@ class MicroDVDFormat(FormatBase):
     @classmethod
     def to_file(cls, subs, fp, format_, fps:Union[None,Real,Timestamps] = None, write_fps_declaration=True, apply_styles=True, **kwargs):
         """
-        See :meth:`pysubs2.formats.FormatBase.to_file()`
+        See :meth:`pysubs3.formats.FormatBase.to_file()`
 
         The only supported styling is marking whole lines italic.
 

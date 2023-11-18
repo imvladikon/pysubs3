@@ -1,8 +1,10 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 import re
 
-from .time import times_to_ms
-from .formatbase import FormatBase
-from .ssaevent import SSAEvent
+from pysubs3.time import times_to_ms
+from pysubs3.formatbase import FormatBase
+from pysubs3.ssaevent import SSAEvent
 
 
 # thanks to http://otsaloma.io/gaupol/doc/api/aeidon.files.mpl2_source.html
@@ -13,13 +15,13 @@ class MPL2Format(FormatBase):
     """MPL2 subtitle format implementation"""
     @classmethod
     def guess_format(cls, text):
-        """See :meth:`pysubs2.formats.FormatBase.guess_format()`"""
+        """See :meth:`pysubs3.formats.FormatBase.guess_format()`"""
         if MPL2_FORMAT.search(text):
             return "mpl2"
 
     @classmethod
     def from_file(cls, subs, fp, format_, **kwargs):
-        """See :meth:`pysubs2.formats.FormatBase.from_file()`"""
+        """See :meth:`pysubs3.formats.FormatBase.from_file()`"""
         def prepare_text(lines):
             out = []
             for s in lines.split("|"):
@@ -30,7 +32,7 @@ class MPL2Format(FormatBase):
                     s = r"{\i1}%s{\i0}" % s[1:].strip()
 
                 out.append(s)
-            return "\\N".join(out)
+            return "\n".join(out)
 
         subs.events = [SSAEvent(start=times_to_ms(s=float(start) / 10), end=times_to_ms(s=float(end) / 10),
                        text=prepare_text(text)) for start, end, text in MPL2_FORMAT.findall(fp.getvalue())]
@@ -38,7 +40,7 @@ class MPL2Format(FormatBase):
     @classmethod
     def to_file(cls, subs, fp, format_, **kwargs):
         """
-        See :meth:`pysubs2.formats.FormatBase.to_file()`
+        See :meth:`pysubs3.formats.FormatBase.to_file()`
 
         No styling is supported at the moment.
 

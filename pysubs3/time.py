@@ -1,9 +1,11 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 from collections import namedtuple
 from numbers import Real
 import re
 from typing import Optional, Tuple, Sequence, Union, cast
-from pysubs2.common import IntOrFloat
-from .timestamps import Timestamps, TimeType
+from pysubs3.common import IntOrFloat
+from pysubs3.timestamps import Timestamps, TimeType
 
 #: Pattern that matches both SubStation and SubRip timestamps.
 TIMESTAMP = re.compile(r"(\d{1,2}):(\d{1,2}):(\d{1,2})[.,](\d{1,3})")
@@ -19,8 +21,8 @@ def make_time(h: IntOrFloat=0, m: IntOrFloat=0, s: IntOrFloat=0, ms: IntOrFloat=
     """
     Convert time to milliseconds.
 
-    See :func:`pysubs2.time.times_to_ms()`. When both frames and fps are specified,
-    :func:`pysubs2.time.frames_to_ms()` is called instead.
+    See :func:`pysubs3.time.times_to_ms()`. When both frames and fps are specified,
+    :func:`pysubs3.time.frames_to_ms()` is called instead.
 
     Raises:
         ValueError: Invalid fps, or one of frames/fps is missing.
@@ -47,7 +49,7 @@ def make_time(h: IntOrFloat=0, m: IntOrFloat=0, s: IntOrFloat=0, ms: IntOrFloat=
 
 def timestamp_to_ms(groups: Sequence[str]):
     """
-    Convert groups from :data:`pysubs2.time.TIMESTAMP` or :data:`pysubs2.time.TIMESTAMP_SHORT`
+    Convert groups from :data:`pysubs3.time.TIMESTAMP` or :data:`pysubs3.time.TIMESTAMP_SHORT`
     match to milliseconds.
     
     Example:
@@ -150,7 +152,7 @@ def ms_to_str(ms: IntOrFloat, fractions: bool=False) -> str:
     Prettyprint milliseconds to [-]H:MM:SS[.mmm]
     
     Handles huge and/or negative times. Non-negative times with ``fractions=True``
-    are matched by :data:`pysubs2.time.TIMESTAMP`.
+    are matched by :data:`pysubs3.time.TIMESTAMP`.
     
     Arguments:
         ms: Number of milliseconds (int, float or other numeric class).

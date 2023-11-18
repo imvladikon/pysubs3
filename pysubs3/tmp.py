@@ -1,11 +1,13 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 import re
 import warnings
 
-from .formatbase import FormatBase
-from .ssaevent import SSAEvent
-from .ssastyle import SSAStyle
-from .substation import parse_tags
-from .time import ms_to_times, make_time, TIMESTAMP_SHORT, timestamp_to_ms
+from pysubs3.formatbase import FormatBase
+from pysubs3.ssaevent import SSAEvent
+from pysubs3.ssastyle import SSAStyle
+from pysubs3.substation import parse_tags
+from pysubs3.time import ms_to_times, make_time, TIMESTAMP_SHORT, timestamp_to_ms
 
 #: Pattern that matches TMP line
 TMP_LINE = re.compile(r"(\d{1,2}:\d{2}:\d{2}):(.+)")
@@ -30,7 +32,7 @@ class TmpFormat(FormatBase):
 
     @classmethod
     def guess_format(cls, text):
-        """See :meth:`pysubs2.formats.FormatBase.guess_format()`"""
+        """See :meth:`pysubs3.formats.FormatBase.guess_format()`"""
         if "[Script Info]" in text or "[V4+ Styles]" in text:
             # disambiguation vs. SSA/ASS
             return None
@@ -41,7 +43,7 @@ class TmpFormat(FormatBase):
 
     @classmethod
     def from_file(cls, subs, fp, format_, **kwargs):
-        """See :meth:`pysubs2.formats.FormatBase.from_file()`"""
+        """See :meth:`pysubs3.formats.FormatBase.from_file()`"""
         events = []
 
         def prepare_text(text):
@@ -74,7 +76,7 @@ class TmpFormat(FormatBase):
     @classmethod
     def to_file(cls, subs, fp, format_, apply_styles=True, **kwargs):
         """
-        See :meth:`pysubs2.formats.FormatBase.to_file()`
+        See :meth:`pysubs3.formats.FormatBase.to_file()`
 
         Italic, underline and strikeout styling is supported.
 
@@ -88,7 +90,7 @@ class TmpFormat(FormatBase):
             for fragment, sty in parse_tags(text, style, subs.styles):
                 fragment = fragment.replace(r"\h", " ")
                 fragment = fragment.replace(r"\n", "\n")
-                fragment = fragment.replace(r"\N", "\n")
+                # fragment = fragment.replace(r"\N", "\n")
                 if apply_styles:
                     if sty.italic: fragment = f"<i>{fragment}</i>"
                     if sty.underline: fragment = f"<u>{fragment}</u>"

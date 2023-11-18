@@ -6,3 +6,6 @@ doc:
 
 clean:
 	cd docs; $(MAKE) clean
+
+build:
+	python3 setup.py sdist bdist_wheel

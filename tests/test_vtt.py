@@ -1,10 +1,10 @@
 """
-pysubs2.formats.vtt tests
+pysubs3.formats.vtt tests
 
 """
 
 from textwrap import dedent
-from pysubs2 import SSAFile, SSAEvent, make_time
+from pysubs3 import SSAFile, SSAEvent, make_time
 
 def test_simple_write():
     subs = SSAFile()

@@ -1,4 +1,4 @@
-from pysubs2 import Color
+from pysubs3 import Color
 import pytest
 
 def test_color_argument_validation():

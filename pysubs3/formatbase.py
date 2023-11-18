@@ -1,6 +1,8 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 from typing import Optional
 import io
-import pysubs2
+import pysubs3
 
 
 class FormatBase:
@@ -11,15 +13,20 @@ class FormatBase:
 
     1. Create a subclass of FormatBase and override the methods you want to support.
     2. Decide on a format identifier, like the ``"srt"`` or ``"microdvd"`` already used in the library.
-    3. Add your identifier and class to :data:`pysubs2.formats.FORMAT_IDENTIFIER_TO_FORMAT_CLASS`.
-    4. (optional) Add your file extension and class to :data:`pysubs2.formats.FILE_EXTENSION_TO_FORMAT_IDENTIFIER`.
+    3. Add your identifier and class to :data:`pysubs3.formats.FORMAT_IDENTIFIER_TO_FORMAT_CLASS`.
+    4. (optional) Add your file extension and class to :data:`pysubs3.formats.FILE_EXTENSION_TO_FORMAT_IDENTIFIER`.
 
     After finishing these steps, you can call :meth:`SSAFile.load()` and :meth:`SSAFile.save()` with your
     format, including autodetection from content and file extension (if you provided these).
 
     """
     @classmethod
-    def from_file(cls, subs: "pysubs2.SSAFile", fp: io.TextIOBase, format_: str, **kwargs):
+    def from_file(cls,
+                  subs: "pysubs3.SSAFile",
+                  fp: io.TextIOBase,
+                  format_: str,
+                  detect_language: bool = False,
+                  **kwargs):
         """
         Load subtitle file into an empty SSAFile.
 
@@ -36,13 +43,13 @@ class FormatBase:
             None
 
         Raises:
-            pysubs2.exceptions.UnknownFPSError: Framerate was not provided and cannot
+            pysubs3.exceptions.UnknownFPSError: Framerate was not provided and cannot
                 be detected.
         """
         raise NotImplementedError("Parsing is not supported for this format")
 
     @classmethod
-    def to_file(cls, subs: "pysubs2.SSAFile", fp: io.TextIOBase, format_: str, **kwargs):
+    def to_file(cls, subs: "pysubs3.SSAFile", fp: io.TextIOBase, format_: str, **kwargs):
         """
         Write SSAFile into a file.
 
@@ -61,7 +68,7 @@ class FormatBase:
             None
 
         Raises:
-            pysubs2.exceptions.UnknownFPSError: Framerate was not provided and
+            pysubs3.exceptions.UnknownFPSError: Framerate was not provided and
                 ``subs.fps is None``.
         """
         raise NotImplementedError("Writing is not supported for this format")
