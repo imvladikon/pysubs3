@@ -5,7 +5,8 @@ A python3 library for parsing and manipulating subtitle files.
 Fork of [pysub2](https://github.com/tkarabela/pysubs2) with small changes:
 
 * optional language detection for each line of subtitles
-* changed behaviour of using "\N" character in subtitles as a line break (just usual "\n" is used now) because sometimes it was causing problems with RTL languages
+* changed behaviour of using "\N" character in subtitles as a line break (just usual "\n" is used now) because sometimes it was causing problems with RTL languages:     
+  let's imagine we have \N in right to left language, then need to preprocess it so, that it would not be N\ otherwise it will be unsplitable (maybe for subtitles editing such behaviour is ok, but for other purposes like NLP/Speech recognition it is not) 
 * small changes (like changes in timestamps)
 * removing html tags from subtitles using bs4 instead of regex (which was causing problems with some subtitles)
 
